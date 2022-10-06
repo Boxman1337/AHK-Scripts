@@ -1,16 +1,19 @@
 ﻿; Zarp Overnight Zone Capture ;
 ; --------------------------- ;
 
-gosub ZoneCapture
 SetTimer, ZoneCapture, 2050000
 ; Sleep for zone capture timer + cooldown timer + margin
 ; 14 min + 20 min + 10 sec = 2050000 ms
 
 ZoneCapture:
+	Sleep, 5000
+
 	If WinActive("Garry's Mod") {
-		Sleep, 1000
 		Send {F4}
 		Sleep, 1000
+		MouseMove, 500, 350
+		Sleep, 1000
+		Click
 		MouseMove, 950, 815
 		Sleep, 1000
 		Click WheelDown	
