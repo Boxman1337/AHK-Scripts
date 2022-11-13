@@ -1,7 +1,7 @@
 ﻿; Zarp DJ Tool for better Timing / Precision ;
 ; ------------------------------------------ ;
 
-; ------------- Each sample button and their respective X, Y - coordinate ------------- ;
+; ------------- Each sample button and their respective X,Y - coordinate ------------- ;
 
 Loop1_1 = [565, 360]
 Loop1_2 = [565, 490]
