@@ -1,4 +1,8 @@
-﻿Sleep, 2000
+﻿
+; Waits for a moment 
+Sleep, 2000
+
+; Activates the script every 16 seconds
 SetTimer, LoversGame, 16000
 
 LoversGame:
@@ -33,4 +37,5 @@ LoversGame:
         Sleep, 500
     }
 
+; Exits the macro if ESC is pressed
 Esc::ExitApp
