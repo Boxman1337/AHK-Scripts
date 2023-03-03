@@ -1,7 +1,10 @@
 ﻿; Zarp Automatic Song Like Incrementer ;
 ; ------------------------------------ ;
 
+; Waits for a moment
 Sleep 2000
+
+; Activates the script
 SetTimer, LikeSong, 60000
 
 LikeSong:
