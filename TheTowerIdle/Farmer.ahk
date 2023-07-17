@@ -15,20 +15,33 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ClaimGems:
 	If WinActive("BlueStacks App Player") {
 		; Click the "claim gems" button and sleep for .25 seconds
-		Click, 740, 500
+		MouseMove, 740, 500
+		Click
 		Sleep, 1000
 	}
 return
 
 ; ---------------------------------- ;
 
-BuyMax(col, row) {
+BuyMax(col, row, category) {
+    ElementsCol := [880, 1175]
+	ElementsRow := [750, 870, 990]	
+	
+	; Indexing starts at 1 ?!?!?
+	XPos := ElementsCol[col]
+	YPos := ElementsRow[row]
 
-	ElementsCol := [880, 1175]
-	ElementsRow := [750, 870, 990]
-	
-	Click, ElementsCol[%col% - 1], ElementsRow[%row% - 1]
-	
+    ResetCategory()
+
+    if (category = "Offense")
+        SwapToOffense()
+    else if (category = "Defense")
+        SwapToDefense()
+    else 
+        SwapToUtility()
+
+	MouseMove, XPos, YPos
+	Click
 	Sleep, 1000
 }
 
@@ -43,35 +56,38 @@ CenterMouseOnElements() {
 
 SwapToOffense() {
 	If WinActive("BlueStacks App Player") {
-		Click, 725, 1050
+		MouseMove, 725, 1050
+		Click
 		Sleep, 1000
 	}
 }
 
 SwapToDefense() {
 	If WinActive("BlueStacks App Player") {
-		Click, 880, 1050
+		MouseMove, 880, 1050
+		Click
 		Sleep, 1000	
 	}
 }
 
 SwapToUtility() {
 	If WinActive("BlueStacks App Player") {
-		Click, 1035, 1050
+		MouseMove, 1035, 1050
+		Click
 		Sleep, 1000
 	}
 }
 
 SwapToUW() {
 	If WinActive("BlueStacks App Player") {
-		Click, 1185, 1050
+		MouseMove, 1185, 1050
+		Click
 		Sleep, 1000
 	}
 }
 
 ResetCategory() {
 	If WinActive("BlueStacks App Player") {
-		SwapToUW()
 		SwapToOffense()
 		SwapToUW()
 	}
@@ -113,20 +129,27 @@ ScrollToBottom() {
 
 ; ---------------------------------- ;
 
-EmployStrategy() {
+EmployStrategy(Iteration) {
 	If WinActive("BlueStacks App Player") {
 
-		; At the beginning of the first 30 iterations, swap to the utility category and try to max a cash income
-		ScrollToTop()
-		ResetCategory()
-		SwapToUtility()
-		
-		; Cash Bonus
-		BuyMax(1, 1)
-
-		; Cash / Wave
-		BuyMax(2, 1)
-		
+        if (Iteration <= 20)
+            ; Cash Bonus
+            BuyMax(1, 1, "Utility")
+        else if (21 < Iteration and Iteration <= 40)
+            ; Cash / Wave
+            BuyMax(1, 2, "Utility")
+        else if (41 < Iteration and Iteration <= 60)
+            ; Coin per Kill Bonus
+            BuyMax(2, 1, "Utility")
+        else if (61 < Iteration and Iteration <= 80)
+            ; Coin / Wave
+            BuyMax(2, 2, "Utility")
+        else if (81 < Iteration and Iteration <= 100)
+            ; Attack Speed
+            BuyMax(1, 2, "Offense")
+        else 
+            ; Spam Health
+            BuyMax(1, 1, "Defense")
 	}
 }
 
@@ -136,19 +159,19 @@ Main() {
 
 	Sleep, 1000
 	
-	If WinActive("BlueStacks App Player") {
-		; Claims gems every 600 seconds (10 minutes) + margin of 5 seconds
-		SetTimer, ClaimGems, 605000
-	}
+	; Claims gems every 600 seconds (10 minutes) + margin of 5 seconds
+	Gosub, Claimgems		
+	SetTimer, ClaimGems, 605000
+
+    global Iteration := 0
 
 	Loop {
 		If WinActive("BlueStacks App Player") {
-	
-			; Move mouse to center among elements
-			CenterMouseOnElements()
+
+            Iteration += 1
 
 			; Employs hardcoded strategy
-			EmployStrategy()
+			EmployStrategy(Iteration)
 
 			Sleep, 5000
 
