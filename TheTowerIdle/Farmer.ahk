@@ -29,7 +29,7 @@ BuyMax(col, row, category) {
     SwapTo(category)
 	MouseMove, XPos, YPos
 	Click
-	Sleep, 500
+	Sleep, 250
 }
 
 ClaimGems() {
@@ -38,7 +38,7 @@ ClaimGems() {
         ; Click the "claim gems" button
 		MouseMove, 740, 500
 		Click
-        Sleep, 100
+        Sleep, 250
 
         ; Press around the tower to collect the floating gems
         towerX := 960
@@ -57,11 +57,19 @@ ClaimGems() {
             MouseMove, pointX, pointY
             Click
 
-            Sleep, 100
+            Sleep, 250
         }
 
-        Sleep, 100
+        Sleep, 250
 
+    }
+}
+
+TryRetry() {
+    If WinActive("BlueStacks App Player") {
+        MouseMove, 780, 820
+        Click
+        Sleep, 250
     }
 }
 
@@ -69,7 +77,7 @@ ClaimGems() {
 
 CenterMouseOnElements() {
 	MouseMove, 960, 820
-	Sleep, 500
+	Sleep, 250
 }
 
 ; ---------------------------------- ;
@@ -86,7 +94,7 @@ SwapTo(category) {
             MouseMove, 1185, 1050
     }
     Click
-    Sleep, 500
+    Sleep, 250
 }
 
 ResetCategory() {
@@ -103,7 +111,7 @@ ScrollToTop() {
 		Loop, 10 {
 		    Click WheelUp
         }
-		Sleep, 500
+		Sleep, 250
 	}
 
 }
@@ -114,7 +122,7 @@ ScrollToBottom() {
         Loop, 10 {
 		    Click WheelDown
         }
-		Sleep, 500
+		Sleep, 250
 	}
 }
 
@@ -135,7 +143,7 @@ EmployStrategy(Iteration) {
 
 Main() {
 
-    Sleep, 1000
+    Sleep, 2500
 
     global Iteration := 0
 
@@ -149,7 +157,9 @@ Main() {
 
             ClaimGems()
 
-			Sleep, 4000
+            TryRetry()
+
+			Sleep, 3000
 
 		}
 	}
