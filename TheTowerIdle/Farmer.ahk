@@ -12,14 +12,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 ; ---------------------------------- ;
 
-ClaimGems:
-	If WinActive("BlueStacks App Player") {	
-        ; Click the "claim gems" button
-		MouseMove, 740, 500
-		Click
-		Sleep, 500
-    }
-return
+
 
 ; ---------------------------------- ;
 
@@ -37,6 +30,39 @@ BuyMax(col, row, category) {
 	MouseMove, XPos, YPos
 	Click
 	Sleep, 500
+}
+
+ClaimGems() {
+	If WinActive("BlueStacks App Player") {	
+        
+        ; Click the "claim gems" button
+		MouseMove, 740, 500
+		Click
+        Sleep, 100
+
+        ; Press around the tower to collect the floating gems
+        towerX := 960
+        towerY := 310
+        radius := 95
+
+        angles := [0, 3.14/2, 3.14, 3*3.14/2]
+
+        pointX := 0
+        pointY := 0
+
+        Loop % angles.Length() {
+            pointX := Floor(towerX + radius * Sin(angles[A_Index]))
+            pointY := Floor(towerY + radius * Cos(angles[A_Index]))
+
+            MouseMove, pointX, pointY
+            Click
+
+            Sleep, 100
+        }
+
+        Sleep, 100
+
+    }
 }
 
 ; ---------------------------------- ;
@@ -96,22 +122,12 @@ ScrollToBottom() {
 
 EmployStrategy(Iteration) {
 	If WinActive("BlueStacks App Player") {
-
-        if (Iteration <= 30)
-            ; Coin per Kill Bonus
-            BuyMax(1, 2, "Utility")
-        else if (31 <= Iteration and Iteration <= 60)
-            ; Coin / Wave
-            BuyMax(2, 2, "Utility")
-        else if (61 <= Iteration and Iteration <= 90)
-            ; Damage
-            BuyMax(1, 1, "Offense")
-        else if (91 <= Iteration and Iteration <= 120)
-            ; Crit Multi
-            BuyMax(2, 2, "Offense")
-        else 
+        if (Mod(Iteration, 2) = 0)
             ; Spam Health
             BuyMax(1, 1, "Defense")
+        else 
+            ; Spam Damage
+            BuyMax(1, 1, "Offense")
 	}
 }
 
@@ -119,11 +135,7 @@ EmployStrategy(Iteration) {
 
 Main() {
 
-	Sleep, 1000
-	
-	; Tries to claim gems every 5 minutes
-	Gosub, Claimgems		
-	SetTimer, ClaimGems, 300000
+    Sleep, 1000
 
     global Iteration := 0
 
@@ -135,7 +147,9 @@ Main() {
 			; Employs hardcoded strategy
 			EmployStrategy(Iteration)
 
-			Sleep, 4025
+            ClaimGems()
+
+			Sleep, 4000
 
 		}
 	}
