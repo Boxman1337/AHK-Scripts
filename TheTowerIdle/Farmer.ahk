@@ -13,17 +13,18 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ; ---------------------------------- ;
 
 ClaimGems:
-	If WinActive("BlueStacks App Player") {
-		; Click the "claim gems" button and sleep for .25 seconds
+	If WinActive("BlueStacks App Player") {	
+        ; Click the "claim gems" button
 		MouseMove, 740, 500
 		Click
-		Sleep, 1000
-	}
+		Sleep, 500
+    }
 return
 
 ; ---------------------------------- ;
 
 BuyMax(col, row, category) {
+
     ElementsCol := [880, 1175]
 	ElementsRow := [750, 870, 990]	
 	
@@ -32,64 +33,39 @@ BuyMax(col, row, category) {
 	YPos := ElementsRow[row]
 
     ResetCategory()
-
-    if (category = "Offense")
-        SwapToOffense()
-    else if (category = "Defense")
-        SwapToDefense()
-    else 
-        SwapToUtility()
-
+    SwapTo(category)
 	MouseMove, XPos, YPos
 	Click
-	Sleep, 1000
+	Sleep, 500
 }
 
 ; ---------------------------------- ;
 
 CenterMouseOnElements() {
 	MouseMove, 960, 820
-	Sleep, 1000
+	Sleep, 500
 }
 
 ; ---------------------------------- ;
 
-SwapToOffense() {
-	If WinActive("BlueStacks App Player") {
-		MouseMove, 725, 1050
-		Click
-		Sleep, 1000
-	}
-}
-
-SwapToDefense() {
-	If WinActive("BlueStacks App Player") {
-		MouseMove, 880, 1050
-		Click
-		Sleep, 1000	
-	}
-}
-
-SwapToUtility() {
-	If WinActive("BlueStacks App Player") {
-		MouseMove, 1035, 1050
-		Click
-		Sleep, 1000
-	}
-}
-
-SwapToUW() {
-	If WinActive("BlueStacks App Player") {
-		MouseMove, 1185, 1050
-		Click
-		Sleep, 1000
-	}
+SwapTo(category) {
+    switch category {
+        case "Offense": 
+            MouseMove, 725, 1050
+        case "Defense":
+            MouseMove, 880, 1050
+        case "Utility":
+            MouseMove, 1035, 1050
+        case "UW":
+            MouseMove, 1185, 1050
+    }
+    Click
+    Sleep, 500
 }
 
 ResetCategory() {
 	If WinActive("BlueStacks App Player") {
-		SwapToOffense()
-		SwapToUW()
+		SwapTo("UW")
 	}
 }
 
@@ -97,33 +73,22 @@ ResetCategory() {
 
 ScrollToTop() {
 	If WinActive("BlueStacks App Player") {
-		
 		CenterMouseOnElements()
-
-		Click WheelUp
-		Click WheelUp
-		Click WheelUp
-		Click WheelUp
-		Click WheelUp
-		Click WheelUp
-
-		Sleep, 1000
+		Loop, 10 {
+		    Click WheelUp
+        }
+		Sleep, 500
 	}
+
 }
 
 ScrollToBottom() {
 	If WinActive("BlueStacks App Player") {
-
 		CenterMouseOnElements()
-
-		Click WheelDown
-		Click WheelDown
-		Click WheelDown
-		Click WheelDown
-		Click WheelDown
-		Click WheelDown
-
-		Sleep, 1000
+        Loop, 10 {
+		    Click WheelDown
+        }
+		Sleep, 500
 	}
 }
 
@@ -132,21 +97,18 @@ ScrollToBottom() {
 EmployStrategy(Iteration) {
 	If WinActive("BlueStacks App Player") {
 
-        if (Iteration <= 20)
-            ; Cash Bonus
-            BuyMax(1, 1, "Utility")
-        else if (21 < Iteration and Iteration <= 40)
-            ; Cash / Wave
-            BuyMax(1, 2, "Utility")
-        else if (41 < Iteration and Iteration <= 60)
+        if (Iteration <= 30)
             ; Coin per Kill Bonus
-            BuyMax(2, 1, "Utility")
-        else if (61 < Iteration and Iteration <= 80)
+            BuyMax(1, 2, "Utility")
+        else if (31 <= Iteration and Iteration <= 60)
             ; Coin / Wave
             BuyMax(2, 2, "Utility")
-        else if (81 < Iteration and Iteration <= 100)
-            ; Attack Speed
-            BuyMax(1, 2, "Offense")
+        else if (61 <= Iteration and Iteration <= 90)
+            ; Damage
+            BuyMax(1, 1, "Offense")
+        else if (91 <= Iteration and Iteration <= 120)
+            ; Crit Multi
+            BuyMax(2, 2, "Offense")
         else 
             ; Spam Health
             BuyMax(1, 1, "Defense")
@@ -159,9 +121,9 @@ Main() {
 
 	Sleep, 1000
 	
-	; Claims gems every 600 seconds (10 minutes) + margin of 5 seconds
+	; Tries to claim gems every 5 minutes
 	Gosub, Claimgems		
-	SetTimer, ClaimGems, 605000
+	SetTimer, ClaimGems, 300000
 
     global Iteration := 0
 
@@ -173,7 +135,7 @@ Main() {
 			; Employs hardcoded strategy
 			EmployStrategy(Iteration)
 
-			Sleep, 5000
+			Sleep, 4025
 
 		}
 	}
@@ -184,5 +146,8 @@ Main() {
 ; Starts/Exits the script when Backspace/Escape is pressed
 Backspace::Main()
 Esc::ExitApp
+
+; Pauses / Unpauses the script
+p::Pause
 
 
